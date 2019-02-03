@@ -34,38 +34,42 @@ class V:
 	def __repr__(self):
 		return str(self.coords())
 
+"""
+2D shapes
+"""
+class Shape(object):
+	def __init__(self,type,v):
+		if(len(v) == 0):
+			raise ValueError("Empty Input")
+		self.type = type
+		self.v = v
+	def __repr__(self):
+		s = ""
+		for vertex in self.v:
+			s += str(vertex)
+		return "type: " + self.type + " v: " + s
 
 
 """
-2D geomtry circle
+circle
 """
-class Circle:
+class Circle(Shape):
 	def __init__(self,c,r):
 		if(r <= 0):
 			raise ValueError("Invalid radius")
-		self.type="circle"
-		self.pos = c
+		Shape.__init__(self,"circle",[c])
 		self.radius = r
 
 	def __repr__(self):
-		s = "type: "+self.type + " pos: "+str(self.pos)
+		s = Shape.__repr__(self)
 		s += " rardius: "+ str(self.radius)
 		return  s
 """
-2D polygon
+polygon
 """
-class Polygon:
+class Polygon(Shape):
 	def __init__(self,v):
-		length = len(v)
-		if length == 0:
-			raise NameError("empty input")
-
-		self.type = "polygon"
-		self.num = len(v)
-		self.v = v
-	
-	def __repr__(self):
-		return self.type + " num: "+self.num + "\nv: " + str(self.v) 
+		Shape.__init__(self,"polygon",v)
 
 """
 Object properties:
@@ -90,6 +94,8 @@ def main():
 	print(o)
 	c = Circle(V(1,1),1)
 	print(c)
+	p = Polygon([V(1,1),V(2,2),V(1,3)])
+	print(p)
 
 
 if __name__ == '__main__':
