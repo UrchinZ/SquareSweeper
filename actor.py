@@ -1,7 +1,10 @@
+#!/usr/bin/env python
+
+import yaml
 """
 file containing all the geomtry displayed
 """
-
+#https://www.programsinformationpeople.org/runestone/static/publicpy3/Pyglet/windowContents.html
 """
 Vertex position
 """
@@ -74,29 +77,33 @@ class Polygon(Shape):
 """
 Object properties:
 1. how many pieces does it contain
-2. can we move it?
-3. how tall is it? (if lower than the robot, we can suck it in)
+2. can we move it? (is it heavy enough to move)
+3. can we suck it in?/ Is it dust?
 """
 class Object():
-	def __init__(self, part, movable, height):
-		self.part = part
+	def __init__(self, movable, dust, piece_num):
 		self.movable = movable
-		self.height = height
+		self.dust = dust
+		self.num = piece_num
+
 
 	def __repr__(self):
-		s = "part: "+str(self.part) + " movable: "
-		s += str(self.movable) + " height: "+ str(self.height)
+		s = " movable: "+str(self.movable) + " dust "+ str(self.dust)
 		return s 
 
 
 def main():
-	o = Object(1,True,0.01)
+	o = Object(True,True,1)
 	print(o)
 	c = Circle(V(1,1),1)
 	print(c)
 	p = Polygon([V(1,1),V(2,2),V(1,3)])
 	print(p)
 
+
+	with open("./config/test.yaml", 'r') as stream:
+	    info = yaml.load(stream)
+	    print(info)
 
 if __name__ == '__main__':
 	main()
