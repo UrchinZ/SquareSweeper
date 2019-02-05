@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import yaml
+import pyglet
 """
 file containing all the geomtry displayed
 """
@@ -52,7 +53,10 @@ class Shape(object):
 			s += str(vertex)
 		return "type: " + self.type + " v: " + s
 
-
+	def get_v(self):
+		return self.v
+	def get_type(self):
+		return self.type
 """
 circle
 """
@@ -100,10 +104,16 @@ def main():
 	p = Polygon([V(1,1),V(2,2),V(1,3)])
 	print(p)
 
+	
+
+
 
 	with open("./config/test.yaml", 'r') as stream:
 	    info = yaml.load(stream)
 	    print(info)
+	pyglet.app.run()
+
+game_window = pyglet.window.Window()
 
 if __name__ == '__main__':
 	main()
