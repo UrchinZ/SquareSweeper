@@ -67,6 +67,9 @@ class Circle(Shape):
 		Shape.__init__(self,"circle",[c])
 		self.radius = r
 
+	def get_radius(self):
+		return self.radius
+
 	def __repr__(self):
 		s = Shape.__repr__(self)
 		s += " rardius: "+ str(self.radius)
@@ -84,36 +87,43 @@ Object properties:
 2. can we move it? (is it heavy enough to move)
 3. can we suck it in?/ Is it dust?
 """
-class Object():
-	def __init__(self, movable, dust, piece_num):
+class Object(object):
+	def __init__(self, movable, dust, piece_num,pieces):
 		self.movable = movable
 		self.dust = dust
 		self.num = piece_num
+		self.pieces = pieces
 
+	def get_pieces(self):
+		return self.pieces
 
 	def __repr__(self):
-		s = " movable: "+str(self.movable) + " dust "+ str(self.dust)
+		s = "movable: "+str(self.movable) + " dust "+ str(self.dust)
+		s += " piece num: "+str(self.num) + "\n"
+		for shape in self.pieces:
+			s += str(shape)+'\n'
 		return s 
 
 
 def main():
-	o = Object(True,True,1)
-	print(o)
 	c = Circle(V(1,1),1)
 	print(c)
 	p = Polygon([V(1,1),V(2,2),V(1,3)])
 	print(p)
-
-	
-
-
+	print("first object")
+	o = Object(True,True,1,[c])
+	print(o)
+	print("second object:")
+	oo = Object(True,True,2,[c,p])
+	print(oo)
 
 	with open("./config/test.yaml", 'r') as stream:
 	    info = yaml.load(stream)
 	    print(info)
 	pyglet.app.run()
 
-game_window = pyglet.window.Window()
 
 if __name__ == '__main__':
+	game_window = pyglet.window.Window()
+	game_window.clear()
 	main()
