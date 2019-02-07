@@ -2,6 +2,7 @@
 
 import yaml
 import pyglet
+from math import pi,sin,cos
 """
 file containing all the geomtry displayed
 """
@@ -53,8 +54,11 @@ class Shape(object):
 			s += str(vertex)
 		return "type: " + self.type + " v: " + s
 
+	#get position
 	def get_v(self):
 		return self.v
+
+
 	def get_type(self):
 		return self.type
 """
@@ -74,12 +78,39 @@ class Circle(Shape):
 		s = Shape.__repr__(self)
 		s += " rardius: "+ str(self.radius)
 		return  s
+
+	#return list of vertices at the circumference
+	#it's an approximation of a circle
+	def show(self):
+		pos = self.v[0]
+		p = int(self.radius*2)
+		angle = 0
+		increment = (pi * 2) / p
+		coords = []
+		for i in range(0, p):
+			x = self.radius * sin(angle) + pos.x
+			y = self.radius * cos(angle) + pos.y
+			coords.append(x)
+			coords.append(y)
+			angle += increment
+		return tuple(coords)
+
 """
 polygon
 """
 class Polygon(Shape):
 	def __init__(self,v):
 		Shape.__init__(self,"polygon",v)
+
+	#return list of vertices to draw
+	def show(self):
+		flat_list = []
+		for l in self.v:
+			t = l.coords()
+			flat_list.extend(list(t))
+		return tuple(flat_list)
+
+
 
 """
 Object properties:
@@ -104,12 +135,14 @@ class Object(object):
 			s += str(shape)+'\n'
 		return s 
 
-
+#some testing
 def main():
-	c = Circle(V(1,1),1)
+	c = Circle(V(1,1),200)
 	print(c)
+	#print(c.show())
 	p = Polygon([V(1,1),V(2,2),V(1,3)])
 	print(p)
+	print(len(p.show()))
 	print("first object")
 	o = Object(True,True,1,[c])
 	print(o)

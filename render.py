@@ -1,5 +1,6 @@
 import pyglet
 import sys
+from math import *
 from actor import *
 
 class ShapeWindow(pyglet.window.Window):
@@ -22,49 +23,31 @@ class ShapeWindow(pyglet.window.Window):
 
         for a in self.actors:
             for shape in a.get_pieces():
+                v = shape.show()
                 if(shape.get_type() == "circle"):
-                    print("I need a circle function")
+                    self.draw_circle(v)
                 else: #for now definitely polygon
-                    print("drawing polygon")
-                    v = shape.get_v()
-                    print(v)
-                    num = len(v)
-                    print(num)
+                    self.draw_polygon(v)
 
-                    self.draw_polygon(num,v)
+    #OpenGL syntax for drawing filled circle
+    def draw_circle(self,v):
+        num = len(v)/2
+        pyglet.graphics.draw(num, 
+            pyglet.gl.GL_TRIANGLE_FAN,("v2f", v))
 
-        #self.draw_points()
-        #self.draw_line()
-        #self.draw_triangle()
-        #self.draw_polygon()
-
-    def draw_points(self):
-        pyglet.graphics.draw(3, pyglet.gl.GL_POINTS,
-        ('v2i', (10, 10, 100, 100, 200,200)))
-
-    def draw_line(self):
-        pyglet.graphics.draw(4, pyglet.gl.GL_LINES,
-        ('v2i', (10, 100, 50, 50, 200,100,300,300)))
-
-    def draw_triangle(self):
-        pyglet.graphics.draw(3, pyglet.gl.GL_TRIANGLES,
-        ('v2i', (500, 100, 600, 300, 550,450)))
-
-    def draw_polygon(self,num,v):
-        flat_list = []
-        for l in v:
-            t = l.coords()
-            flat_list.extend(list(t))
-        t  = tuple(flat_list)
-        print(t)
+    #OpenGL syntax for drawing polygon
+    def draw_polygon(self,v):
+        num = len(v)/2
         pyglet.graphics.draw(num, pyglet.gl.GL_POLYGON,
-        ('v2i',t))
+        ('v2i',v))
 
     def update(self, dt):
         pass
+
+
 if __name__ == '__main__':
     shape_window = ShapeWindow()
-    c = Circle(V(1,1),1)
+    c = Circle(V(1,1),100)
     print(c)
     p = Polygon([V(300,400),V(200,200),V(200,300)])
     print(p)
