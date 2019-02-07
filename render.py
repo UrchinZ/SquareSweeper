@@ -5,8 +5,13 @@ from actor import *
 
 class ShapeWindow(pyglet.window.Window):
 
+    #args pass in non-keyworded variable length argument list
+    # use: for arg in argv:
+    #kwargs pass keyworded variable length of arguments
+    # use: for key, value in kwargs.iteritems()
+    #https://pythontips.com/2013/08/04/args-and-kwargs-in-python-explained/
     def __init__(self,*args,**kwargs):
-        pyglet.window.Window.__init__(self, *args,**kwargs)
+        pyglet.window.Window.__init__(self)
         #set color
         pyglet.gl.glClearColor(0.10, 0.10, 0.0,0.0)
         #clear window
@@ -22,7 +27,6 @@ class ShapeWindow(pyglet.window.Window):
     def on_draw(self):
         print('Draw simulation')
         sys.stdout.flush()
-
         for a in self.actors:
             for shape in a.get_pieces():
                 v = shape.show()
@@ -30,6 +34,17 @@ class ShapeWindow(pyglet.window.Window):
                     self.draw_circle(v)
                 else: #for now definitely polygon
                     self.draw_polygon(v)
+
+    #allow keyboard control
+    def on_key_press(self,key,modifiers):
+        if key == pyglet.window.key.UP:
+            print("up")
+        elif key == pyglet.window.key.DOWN:
+            print("down")
+        elif key == pyglet.window.key.RIGHT:
+            print("right")
+        elif key == pyglet.window.key.LEFT:
+            print("left")
 
     #OpenGL syntax for drawing filled circle
     def draw_circle(self,v):
