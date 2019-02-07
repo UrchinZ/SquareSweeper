@@ -7,6 +7,8 @@ class ShapeWindow(pyglet.window.Window):
 
     def __init__(self,*args,**kwargs):
         pyglet.window.Window.__init__(self, *args,**kwargs)
+        #set color
+        pyglet.gl.glClearColor(0.10, 0.10, 0.0,0.0)
         #clear window
         self.clear()
         # The game loop
