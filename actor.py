@@ -15,26 +15,24 @@ class V:
 		self.x  = x
 		self.y = y
 
-	def add(self, vec):
-		self.x += vec.x
-		self.y += vec.y
-
-	def sub(self, vec):
-		self.x -= vec.x
-		self.y -= vec.y
-
-	def mult(self, scalar):
-		self.x *= scalar
-		self.y *= scalar
-
-	def mag(self):
-		return sqrt(self.x ** 2 + self.y ** 2)
-
-	def copy(self):
-		return Vec2(self.x, self.y)
-
 	def coords(self):
 		return (self.x, self.y)
+
+	def move(self,vec):
+		self.x += vec[0]
+		self.y += vec[1]
+
+	def up(self,scalar):
+		self.y += scalar
+
+	def down(self,scalar):
+		self.y -= scalar
+
+	def left(self,scalar):
+		self.x -= scalar
+
+	def right(self,scalar):
+		self.x += scalar
 
 	def __repr__(self):
 		return str(self.coords())
@@ -58,9 +56,26 @@ class Shape(object):
 	def get_v(self):
 		return self.v
 
-
 	def get_type(self):
 		return self.type
+
+	#move in specific four directions
+	def move_direction(self,direction,scalar):
+		for vertex in self.v:
+			if direction == "up":
+				vertex.up(scalar)
+			elif direction == "down":
+				vertex.down(scalar)
+			elif direction == "left":
+				vertex.left(scalar)
+			elif direction == "right":
+				vertex.right(scalar)
+	
+	#move by vector
+	def move(self,vec):
+		for vertex in self.v:
+			v.move(vec)
+	
 """
 circle
 """
@@ -127,6 +142,23 @@ class Object(object):
 
 	def get_pieces(self):
 		return self.pieces
+
+	def up(self,value):
+		for piece in self.pieces:
+			piece.move_direction("up",value)
+
+	def down(self,value):
+		for piece in self.pieces:
+			piece.move_direction("down",value)
+
+	def left(self,value):
+		for piece in self.pieces:
+			piece.move_direction("left",value)
+
+	def right(self,value):
+		for piece in self.pieces:
+			piece.move_direction("right",value)
+
 
 	def __repr__(self):
 		s = "movable: "+str(self.movable) + " dust "+ str(self.dust)
