@@ -12,6 +12,18 @@ class ShapeWindow(pyglet.window.Window):
     #https://pythontips.com/2013/08/04/args-and-kwargs-in-python-explained/
     def __init__(self,*args,**kwargs):
         pyglet.window.Window.__init__(self)
+        
+        print("args:")
+        for arg in args:
+            print(arg)
+
+        print("kwargs:")
+        for key, value in kwargs.iteritems():
+            print(str(key) + " " + str(value))
+
+        if "width" in kwargs and "height" in kwargs:
+            self.set_size(int(kwargs.get("width")), int(kwargs.get("height")))
+
         #set color
         pyglet.gl.glClearColor(0.10, 0.10, 0.0,0.0)
         #clear window
@@ -39,6 +51,7 @@ class ShapeWindow(pyglet.window.Window):
                     self.draw_polygon(v)
 
     #allow keyboard control
+    #need to refactor this...
     def on_key_press(self,key,modifiers):
         moving = 50
         if key == pyglet.window.key.UP:
@@ -75,11 +88,12 @@ class ShapeWindow(pyglet.window.Window):
         ('v2i',v))
 
     def update(self, dt):
+        print(dt)
         pass
 
 
 if __name__ == '__main__':
-    shape_window = ShapeWindow()
+    shape_window = ShapeWindow(width=400, height=400)
     c = Circle(V(1,1),100)
     print(c)
     p = Polygon([V(300,400),V(200,200),V(200,300)])
