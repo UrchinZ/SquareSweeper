@@ -1,194 +1,67 @@
-#!/usr/bin/env python
-
-import yaml
+from shape import *
 import pyglet
-from math import pi,sin,cos
-"""
-file containing all the geomtry displayed
-"""
-#https://www.programsinformationpeople.org/runestone/static/publicpy3/Pyglet/windowContents.html
-"""
-Vertex position
-"""
-class V:
-	def __init__(self, x, y):
-		self.x  = x
-		self.y = y
 
-	def coords(self):
-		return (self.x, self.y)
+class Actor():
+	def __init__(self,shapes=None,actor_type=None):
+		self.parts = shapes #the list of shapes
+		self.actor_type = actor_type #what kind of actor are they?
 
-	def move(self,vec):
-		self.x += vec[0]
-		self.y += vec[1]
-
-	def up(self,scalar):
-		self.y += scalar
-
-	def down(self,scalar):
-		self.y -= scalar
-
-	def left(self,scalar):
-		self.x -= scalar
-
-	def right(self,scalar):
-		self.x += scalar
-
+	#print information
 	def __repr__(self):
-		return str(self.coords())
+		s = "actor: "
+		if self.actor_type:
+			s += "actor_type: " + str(self.actor_type) + "| "
+		if self.parts:
+			for p in self.parts:
+				s += str(p)
+		return s
 
-"""
-2D shapes
-"""
-class Shape(object):
-	def __init__(self,type,v):
-		if(len(v) == 0):
-			raise ValueError("Empty Input")
-		self.type = type
-		self.v = v
-	def __repr__(self):
-		s = ""
-		for vertex in self.v:
-			s += str(vertex)
-		return "type: " + self.type + " v: " + s
+	#return all shapes/parts of the actor
+	def get_parts(self):
+		return self.parts
 
-	#get position
-	def get_v(self):
-		return self.v
+	#return actor type
+	def get_actor_type(self):
+		return self.actor_type
 
-	def get_type(self):
-		return self.type
-
-	#move in specific four directions
-	def move_direction(self,direction,scalar):
-		for vertex in self.v:
-			if direction == "up":
-				vertex.up(scalar)
-			elif direction == "down":
-				vertex.down(scalar)
-			elif direction == "left":
-				vertex.left(scalar)
-			elif direction == "right":
-				vertex.right(scalar)
-	
-	#move by vector
-	def move(self,vec):
-		for vertex in self.v:
-			v.move(vec)
-	
-"""
-circle
-"""
-class Circle(Shape):
-	def __init__(self,c,r):
-		if(r <= 0):
-			raise ValueError("Invalid radius")
-		Shape.__init__(self,"circle",[c])
-		self.radius = r
-
-	def get_radius(self):
-		return self.radius
-
-	def __repr__(self):
-		s = Shape.__repr__(self)
-		s += " rardius: "+ str(self.radius)
-		return  s
-
-	#return list of vertices at the circumference
-	#it's an approximation of a circle
+	#draw in 2D ############
 	def show(self):
-		pos = self.v[0]
-		p = int(self.radius*2)
-		angle = 0
-		increment = (pi * 2) / p
-		coords = []
-		for i in range(0, p):
-			x = self.radius * sin(angle) + pos.x
-			y = self.radius * cos(angle) + pos.y
-			coords.append(x)
-			coords.append(y)
-			angle += increment
-		return tuple(coords)
+		for part in self.parts:
+			if part.type == "polygon":
+				v = part.get_pos()
+				num = len(v)/2
+        		pyglet.graphics.draw(num, pyglet.gl.GL_POLYGON,
+        		('v2i',v))
 
-"""
-polygon
-"""
-class Polygon(Shape):
-	def __init__(self,v):
-		Shape.__init__(self,"polygon",v)
-
-	#return list of vertices to draw
-	def show(self):
-		flat_list = []
-		for l in self.v:
-			t = l.coords()
-			flat_list.extend(list(t))
-		return tuple(flat_list)
+    #TODO translate is more like move fix in shape
+	def move(self,vec,DIM):
+		for p in self.parts:
+			p.translate(vec)
+		self.check_boundary(DIM)
+	
+	def check_boundary(self,DIM):
+		for p in self.parts:
+			vertices = p.get_vertices()
+			for v in vertices:
+				if v.x < 0:
+					p.translate((-v.x,0))
+				if v.y < 0:
+					p.translate((0,-v.y))
+				if v.x > DIM[0]:
+					p.translate((-v.x+DIM[0],0))
+				if v.y > DIM[1]:
+					p.translate((0,-v.y+DIM[1]))
 
 
-
-"""
-Object properties:
-1. how many pieces does it contain
-2. can we move it? (is it heavy enough to move)
-3. can we suck it in?/ Is it dust?
-"""
-class Object(object):
-	def __init__(self, movable, dust, piece_num,pieces):
-		self.movable = movable
-		self.dust = dust
-		self.num = piece_num
-		self.pieces = pieces
-
-	def get_pieces(self):
-		return self.pieces
-
-	def up(self,value):
-		for piece in self.pieces:
-			piece.move_direction("up",value)
-
-	def down(self,value):
-		for piece in self.pieces:
-			piece.move_direction("down",value)
-
-	def left(self,value):
-		for piece in self.pieces:
-			piece.move_direction("left",value)
-
-	def right(self,value):
-		for piece in self.pieces:
-			piece.move_direction("right",value)
+#specialized obstacle class
+class Obs(Actor):
+	def __init__(self,shapes=None):
+		Actor.__init__(self,shapes,"obs")
 
 
-	def __repr__(self):
-		s = "movable: "+str(self.movable) + " dust "+ str(self.dust)
-		s += " piece num: "+str(self.num) + "\n"
-		for shape in self.pieces:
-			s += str(shape)+'\n'
-		return s 
-
-#some testing
-def main():
-	c = Circle(V(1,1),200)
-	print(c)
-	#print(c.show())
-	p = Polygon([V(1,1),V(2,2),V(1,3)])
-	print(p)
-	print(len(p.show()))
-	print("first object")
-	o = Object(True,True,1,[c])
-	print(o)
-	print("second object:")
-	oo = Object(True,True,2,[c,p])
-	print(oo)
-
-	with open("./config/test.yaml", 'r') as stream:
-	    info = yaml.load(stream)
-	    print(info)
-	pyglet.app.run()
 
 
 if __name__ == '__main__':
-	game_window = pyglet.window.Window()
-	game_window.clear()
-	main()
+	p1 = Polygon([V(0,0),V(1,0),V(1,1),V(0,1)])
+	a = Obs([p1])
+	print(a)

@@ -12,7 +12,9 @@ class ShapeWindow(pyglet.window.Window):
     #https://pythontips.com/2013/08/04/args-and-kwargs-in-python-explained/
     def __init__(self,*args,**kwargs):
         pyglet.window.Window.__init__(self)
-        
+        #self.batch = pyglet.graphics.Batch()
+        self.window_width = 600
+        self.window_height = 600
         print("args:")
         for arg in args:
             print(arg)
@@ -22,6 +24,8 @@ class ShapeWindow(pyglet.window.Window):
             print(str(key) + " " + str(value))
 
         if "width" in kwargs and "height" in kwargs:
+            self.window_width = int(kwargs.get("width"))
+            self.window_height = int(kwargs.get("height"))   
             self.set_size(int(kwargs.get("width")), int(kwargs.get("height")))
 
         #set color
