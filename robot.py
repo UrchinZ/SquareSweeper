@@ -9,10 +9,11 @@ class SquareRobot(Actor):
 		DIM = (100,100)
 		center = (50,50)
 		v1 = V(center[0]-DIM[0]/2, center[1]-DIM[1]/2)
-		v2 = V(center[0]-DIM[0]/2, center[1]+DIM[1]/2)
-		v3 = V(center[0]+DIM[0]/2, center[1]+DIM[1]/2)
-		v4 = V(center[0]+DIM[0]/2, center[1]-DIM[1]/2)
-		self.parts = [Polygon([v1,v2,v3,v4])]
+		#v2 = V(center[0]-DIM[0]/2, center[1]+DIM[1]/2)
+		#v3 = V(center[0]+DIM[0]/2, center[1]+DIM[1]/2)
+		#v4 = V(center[0]+DIM[0]/2, center[1]-DIM[1]/2)
+		#self.parts = [Polygon([v1,v2,v3,v4])]
+		self.parts = [Rectangle(v1,width = DIM[0],height=DIM[1])]
 		self.actor_type = "robot"
 		#self.key_handler = key.KeyStateHandler()
 		#self.event_handlers = [self, self.key_handler]
