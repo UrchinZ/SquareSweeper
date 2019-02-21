@@ -46,8 +46,28 @@ window = pyglet.window.Window(DIM[0], DIM[1])
 robot = SquareRobot()
 actors = [robot]
 
+#bedroom setup
+obs1 = Obs(shapes=[Rectangle(V(400,300),width=50,height=50)])
+obs2 = Obs(shapes=[Rectangle(V(700,300),width=50,height=50)])
+obs3 = Obs(shapes=[Rectangle(V(400,100),width=50,height=50)])
+obs4 = Obs(shapes=[Rectangle(V(700,100),width=50,height=50)])
+obs5 = Obs(shapes=[Rectangle(V(20,480),width=200,height=120)])
+actors.append(obs1)
+actors.append(obs2)
+actors.append(obs3)
+actors.append(obs4)
+actors.append(obs5)
+
+#pass actor information to quadtree
+
+#pass quadtree to robot
+
 # Tell the main window that the player object responds to events
 window.push_handlers(robot)
+
+for actor in actors:
+    if actor:
+        print actor
 
 @window.event
 def on_draw():

@@ -57,7 +57,9 @@ class Actor():
 class Obs(Actor):
     def __init__(self,shapes=None):
         Actor.__init__(self,shapes,"obs")
-
+    
+    def update(self,dt,DIM):
+      pass
 
 
 
