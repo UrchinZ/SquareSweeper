@@ -152,9 +152,19 @@ def check_xy_overlap(s1,s2):
 	y_dir = ((y_min_1 <= y_min_2 and y_min_2 < y_max_1) or 
 		(y_min_1 < y_max_2 and y_max_2 <= y_max_1))
 
+	direction=[]
+	#shape 2 is on the left of shape 1
+	if x_max_2 < x_min_1:
+		direction.append("left")
+	if x_min_2 > x_max_1:
+		direction.append("right")
+	if y_min_2 > y_max_1:
+		direction.append("up")
+	if y_max_2 < y_min_1:
+		direction.append("down")
 	print(x_dir)
 	print(y_dir)
-	return x_dir and y_dir
+	return (x_dir and y_dir), direction
 
 
 
