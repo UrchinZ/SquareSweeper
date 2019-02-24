@@ -34,10 +34,16 @@ class Actor():
                 ('v2i',v))
 
     #TODO translate is more like move fix in shape
-    def move(self,vec,DIM):
-       for p in self.parts:
-            p.translate(vec)
-       self.check_boundary(DIM)
+    def move(self,vec,DIM,actors):
+      for p in self.parts:
+        p.translate(vec)
+      collision = self.check_obstacle(actors)
+      if collision:
+        for p in self.parts:
+          p.translate((-vec[0],-vec[1]))
+          print("collision")
+      self.check_boundary(DIM)
+       
     
     def check_boundary(self,DIM):
        for p in self.parts:
@@ -52,13 +58,22 @@ class Actor():
                 if v.y > DIM[1]:
                     p.translate((0,-v.y+DIM[1]))
 
+    def check_obstacle(self,actors):
+      for actor in actors:
+        if actor.actor_type == "obs":
+          for part in actor.parts:
+            for self_part in self.parts:
+              collision,direction = check_xy_overlap(part,self_part)
+              if collision:
+                return collision
+
 
 #specialized obstacle class
 class Obs(Actor):
     def __init__(self,shapes=None):
         Actor.__init__(self,shapes,"obs")
     
-    def update(self,dt,DIM):
+    def update(self,dt,DIM,actors):
       pass
 
 

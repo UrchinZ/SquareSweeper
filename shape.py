@@ -145,12 +145,10 @@ def check_xy_overlap(s1,s2):
 		x_min_2 = min(x_min_2,v.x)
 		y_max_2 = max(y_max_2,v.y)
 		y_min_2 = min(y_min_2,v.y)
-	#checks for x direction
-	x_dir = ((x_min_1 <= x_min_2 and x_min_2 < x_max_1) or 
-		(x_min_1 < x_max_2 and x_max_2 <= x_max_1))
-
-	y_dir = ((y_min_1 <= y_min_2 and y_min_2 < y_max_1) or 
-		(y_min_1 < y_max_2 and y_max_2 <= y_max_1))
+	
+	#checks for x and y directions
+	x_dir = not(x_max_2 <= x_min_1 or x_max_1 <= x_min_2)
+	y_dir = not(y_max_2 <= y_min_1 or y_max_1 <= y_min_2)
 
 	direction=[]
 	#shape 2 is on the left of shape 1

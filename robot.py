@@ -6,7 +6,7 @@ from shape import *
 #specialized actor robot
 class SquareRobot(Actor):
 	def __init__(self):
-		DIM = (100,100)
+		DIM = (50,50)
 		center = (50,50)
 		v1 = V(center[0]-DIM[0]/2, center[1]-DIM[1]/2)
 		#v2 = V(center[0]-DIM[0]/2, center[1]+DIM[1]/2)
@@ -17,7 +17,7 @@ class SquareRobot(Actor):
 		self.actor_type = "robot"
 		#self.key_handler = key.KeyStateHandler()
 		#self.event_handlers = [self, self.key_handler]
-		self.speed = 5
+		self.speed = 2
 		self.keys = dict(left=False, right=False, up=False, down=False)
 
 	def on_key_press(self, symbol, modifiers):
@@ -51,16 +51,16 @@ class SquareRobot(Actor):
 			self.keys['right'] = False
 
 
-	def update(self,dt,DIM):
+	def update(self,dt,DIM,actors):
 		#print("update in robot " + str(dt))
 		if self.keys['up']:
-			self.move((0,1*self.speed),DIM)
+			self.move((0,1*self.speed),DIM,actors)
 		if self.keys['down']:
-			self.move((0,-1*self.speed),DIM)
+			self.move((0,-1*self.speed),DIM,actors)
 		if self.keys['left']:
-			self.move((-1*self.speed,0),DIM)
+			self.move((-1*self.speed,0),DIM,actors)
 		if self.keys['right']:
-			self.move((1*self.speed,0),DIM)
+			self.move((1*self.speed,0),DIM,actors)
 
 
 

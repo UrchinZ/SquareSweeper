@@ -47,16 +47,17 @@ robot = SquareRobot()
 actors = [robot]
 
 #bedroom setup
-obs1 = Obs(shapes=[Rectangle(V(400,300),width=50,height=50)])
-obs2 = Obs(shapes=[Rectangle(V(700,300),width=50,height=50)])
-obs3 = Obs(shapes=[Rectangle(V(400,100),width=50,height=50)])
-obs4 = Obs(shapes=[Rectangle(V(700,100),width=50,height=50)])
+obs1 = Obs(shapes=[Rectangle(V(400,300),width=20,height=20)])
+obs2 = Obs(shapes=[Rectangle(V(700,300),width=20,height=20)])
+obs3 = Obs(shapes=[Rectangle(V(400,100),width=20,height=20)])
+obs4 = Obs(shapes=[Rectangle(V(700,100),width=20,height=20)])
 obs5 = Obs(shapes=[Rectangle(V(20,480),width=200,height=120)])
 actors.append(obs1)
 actors.append(obs2)
 actors.append(obs3)
 actors.append(obs4)
 actors.append(obs5)
+obstacle = [obs1,obs2,obs3,obs4,obs5];
 
 #pass actor information to quadtree
 
@@ -79,7 +80,7 @@ def on_draw():
 def update(dt):
     #print("update")
     for actor in actors:
-            actor.update(dt,DIM)
+            actor.update(dt,DIM,actors)
 
 
 if __name__ == "__main__":
