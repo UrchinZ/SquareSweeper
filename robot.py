@@ -3,6 +3,7 @@ from pyglet.window import mouse
 from pyglet.window import key
 from actor import Actor
 from shape import *
+from graph import *
 
 #specialized actor robot
 class SquareRobot(Actor):
@@ -77,6 +78,9 @@ class SquareRobot(Actor):
 
 	def dijk(self):
 		print("I need to do some dijkstra stuff")
+		if not self.map:
+			self.construct_belief_map()
+
 		if (len(self.dest) == 0):
 			print("exiting dijkstra function")
 			return
@@ -100,8 +104,13 @@ class SquareRobot(Actor):
 
 	#run bfs to construct a reasonable map
 	def construct_belief_map(self):
-		pass
-
+		my_center = self.parts[0].get_center()
+		print("my center is: " + str(my_center))
+		i = Node(my_center.x,my_center.y)
+		print(i)
+		#bfs queue
+		queue = [i]
+		
 
 
 
