@@ -1,4 +1,5 @@
-import pyglet
+import pyglet, time
+from pyglet.window import mouse
 from pyglet.window import key
 from actor import Actor
 from shape import *
@@ -7,7 +8,8 @@ from shape import *
 class SquareRobot(Actor):
 	def __init__(self):
 		DIM = (50,50)
-		center = (50,50)
+		center = (25,25)
+		self.sensor = None
 		v1 = V(center[0]-DIM[0]/2, center[1]-DIM[1]/2)
 		#v2 = V(center[0]-DIM[0]/2, center[1]+DIM[1]/2)
 		#v3 = V(center[0]+DIM[0]/2, center[1]+DIM[1]/2)
@@ -18,7 +20,12 @@ class SquareRobot(Actor):
 		#self.key_handler = key.KeyStateHandler()
 		#self.event_handlers = [self, self.key_handler]
 		self.speed = 2
-		self.keys = dict(left=False, right=False, up=False, down=False)
+		self.keys = dict(left=False, right=False, up=False, down=False, dijk = False)
+		self.dest = []
+		self.map = None
+
+	def set_sensor(self,sensor):
+		self.sensor = sensor
 
 	def on_key_press(self, symbol, modifiers):
 		if symbol == key.SPACE:
@@ -35,6 +42,10 @@ class SquareRobot(Actor):
 		elif symbol == key.LEFT:
 			print("left")
 			self.keys["left"] = True
+		elif symbol == key.D:
+			print("Running dijk's...")
+			self.keys["dijk"] = True
+
 
 	def on_key_release(self, symbol, modifiers):
 		if symbol == key.UP:
@@ -61,6 +72,60 @@ class SquareRobot(Actor):
 			self.move((-1*self.speed,0),DIM,actors)
 		if self.keys['right']:
 			self.move((1*self.speed,0),DIM,actors)
+		if self.keys['dijk']:
+			self.dijk()
+
+	def dijk(self):
+		print("I need to do some dijkstra stuff")
+		if (len(self.dest) == 0):
+			print("exiting dijkstra function")
+			return
+		else:
+			print("running to destinations:")
+			print(self.dest)
+
+		while len(self.dest):
+			time.sleep(2)
+			destination = self.dest.pop(0)
+
+		self.keys['dijk'] = False
+
+
+	def on_mouse_press(self, x, y, button, modifiers):
+		if button == 1:
+			#pyglet doesn't respond to clicks outside the stage
+			self.dest.append(V(x,y))
+			#I might want to sort dest
+			print(self.dest)
+
+	#run bfs to construct a reasonable map
+	def construct_belief_map(self):
+		pass
 
 
 
+
+
+
+
+
+
+
+
+
+#sensing checking surroundings for robot
+class Sensor():
+	def __init__(self,owner,obstcles,dim):
+		self.owner = owner
+		self.obs = obstcles
+		self.space_dim = dim
+	#return if shape collide with obstacles
+	def check_with_obs(self,shape):
+	    for actor in obstacle:
+	        for p in actor.get_parts():
+	            overlap,direction=check_xy_overlap(shape,p)
+	            if(overlap):
+	                return overlap
+	    return False
+	def check_point_with_obs(self,v):
+		point = Shape("point",v)

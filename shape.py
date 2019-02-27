@@ -125,6 +125,16 @@ class Rectangle(Polygon):
 	def get_height(self):
 		return self.height
 
+	def get_center(self):
+		v1,v2,v3,v4 = self.get_vertices()
+		x1,y1 = (v1.x,v1.y)
+		x2,y2 = (v2.x,v2.y)
+		x3,y3 = (v3.x,v3.y)
+		x4,y4 = (v4.x,v4.y)
+		return V(min(x1,x2,x3,x4)+self.width/2, min(y1,y2,y3,y4)+self.height/2)
+
+
+
 '''
 function checks if bounding box of x and y direction overlap
 '''
