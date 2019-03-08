@@ -19,7 +19,7 @@ class Node():
 		s += "unexplored: " + str(self.unexplored_neighbors()) + "\n"
 		for n in self.neighbors.keys():
 			if self.neighbors[n] is not None:
-				s+= n +"'s information: " + str(self.neighbors[n].unexplored_neighbors()) + "\n"
+				s+= n +"'s unexplored: " + str(self.neighbors[n].unexplored_neighbors()) + "\n"
 		s +="\n------------------------------\n"
 		return s
 
@@ -31,6 +31,13 @@ class Node():
 			print("need shape for this node")
 			return
 		return (self.shape.get_width(),self.shape.get_height())
+
+	#input: rp: string, relative position | n: neighboring node
+	def assign_neighbor(self,rp,n):
+		assert(n != None)
+		assert(rp in self.neighbors.keys())
+		self.neighbors[rp] = n
+
 
 	#return all neighbors unexplored
 	def unexplored_neighbors(self):

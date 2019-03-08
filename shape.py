@@ -134,6 +134,9 @@ class Rectangle(Polygon):
 		return V(min(x1,x2,x3,x4)+self.width/2, min(y1,y2,y3,y4)+self.height/2)
 
 
+def p_inside_rect(p,rect):
+	p_rect = Rectangle(p)
+	return check_xy_overlap(p_rect,rect)
 
 '''
 function checks if bounding box of x and y direction overlap
@@ -170,8 +173,6 @@ def check_xy_overlap(s1,s2):
 		direction.append("up")
 	if y_max_2 < y_min_1:
 		direction.append("down")
-	print(x_dir)
-	print(y_dir)
 	return (x_dir and y_dir), direction
 
 
