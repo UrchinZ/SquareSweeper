@@ -98,24 +98,25 @@ class SquareRobot(Actor):
 			self.construct_belief_map()
 
 		
-		print("running to destinations:")
-		print(self.dest)
-		self.locate_dest()
+		print("running to destination:")
+		destination = self.dest.pop(0)
+		print(destination)
+		dest = self.map.locate_node(destination)
+		print(dest)
+		self.map.set_dest(dest)
+		print("from:")
+		start_position = self.parts[0].get_center()
+		print(start_position)
+		start = self.map.locate_node(start_position)
+		print(start)
+		self.map.set_start(start)
 
-
-		while len(self.dest):
-			time.sleep(2)
-			destination = self.dest.pop(0)
+		path = self.map.dijkstras()
+		print(path)
+			
 
 		self.keys['dijk'] = False
 
-
-	def locate_dest(self):
-		for d in self.dest:
-			for key,node in self.map.items():
-				inside,loc = p_inside_rect(d,node.shape)
-				if inside == True:
-					print("inside: "+str(key))
 
 
 
@@ -186,8 +187,10 @@ class SquareRobot(Actor):
 		print("post stitching:")
 		print(visited_nodes)
 		for pos,node in visited_nodes.items():
-			node.set_shape(Rectangle(V(pos[0],pos[1]),width = dim[0],height=dim[1]))
-		self.map = visited_nodes
+			node.set_shape(Rectangle(V(pos[0]-dim[0]/2,pos[1]-dim[1]/2),width = dim[0],height=dim[1]))
+		graph = Graph()
+		graph.set_graph(visited_nodes)
+		self.map = graph
 
 
 

@@ -1,6 +1,6 @@
 import numpy
 from vertex import V
-from math import pi,sin,cos
+from math import pi,sin,cos,sqrt
 
 """
 Shape class:
@@ -134,8 +134,23 @@ class Rectangle(Polygon):
 		return V(min(x1,x2,x3,x4)+self.width/2, min(y1,y2,y3,y4)+self.height/2)
 
 
+
+def length_V(v1,v2):
+	return abs(sqrt((v1.x-v2.x)**2 + (v1.y-v2.y)**2))
+
+"""
+returns length of a vector
+"""
+def length(v1,v2):
+	return abs(sqrt((v1[0]-v2[0])**2 + (v1[1]-v2[1])**2 ))
+
+
+"""
+checks if point is inside a rectangle
+"""
 def p_inside_rect(p,rect):
 	p_rect = Rectangle(p)
+	#print("inside p_inside_rect: "+str(p)+" "+str(rect))
 	return check_xy_overlap(p_rect,rect)
 
 '''
