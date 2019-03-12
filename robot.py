@@ -110,9 +110,9 @@ class SquareRobot(Actor):
 		if difference[1] != 0:
 		 	sign[1] = difference[1]/abs(difference[1])
 		move = list(difference)
-		if difference[0] >= self.speed:
+		if abs(difference[0]) >= self.speed:
 			move[0] = sign[0]*self.speed
-		if difference[1] >= self.speed:
+		if abs(difference[1]) >= self.speed:
 			move[1] = sign[1]*self.speed
 		self.move(move,DIM,actors)
 

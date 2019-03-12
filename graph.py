@@ -18,11 +18,19 @@ class Graph():
 	def locate_node(self,pos):
 		for key,node in self.map.items():
 				inside,loc = p_inside_rect(pos,node.shape)
+
 				if inside == True:
 					return key
 		return None
+	
+	def reset_nodes(self):
+		for key, node in self.map.items():
+			node.visited = False
+			node.prev = None
 
 	def dijkstras(self):
+		print("inside dijkstras")
+		self.reset_nodes()
 		cost = dict((el,float("inf")) for el in self.map.keys())
 		queue = [self.start]
 		cost[self.start] = 0
