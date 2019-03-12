@@ -55,8 +55,8 @@ class Node():
 	def __init__(self,x,y):
 		self.x = x
 		self.y = y
-		self.neighbors = dict(up=None,down=None,left=None,right=None,
-			q1=None,q2=None,q3=None,q4=None)
+		self.neighbors = dict(up=None,down=None,left=None,right=None)
+			#q1=None,q2=None,q3=None,q4=None)
 		self.shape = None
 		self.visited = False
 		self.prev = None

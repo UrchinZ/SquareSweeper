@@ -24,6 +24,10 @@ class SquareRobot(Actor):
 		self.keys = dict(left=False, right=False, up=False, down=False, dijk = False)
 		self.dest = []
 		self.map = None
+		self.path = []
+	def get_center(self):
+		center_v = self.parts[0].get_center()
+		return (center_v.x,center_v.y)
 
 	def set_sensor(self,sensor):
 		self.sensor = sensor
@@ -72,18 +76,48 @@ class SquareRobot(Actor):
 			#I might want to sort dest
 			print(self.dest)
 	
+	#change actors to sensor
 	def update(self,dt,DIM,actors):
 		#print("update in robot " + str(dt))
-		if self.keys['up']:
-			self.move((0,1*self.speed),DIM,actors)
-		if self.keys['down']:
-			self.move((0,-1*self.speed),DIM,actors)
-		if self.keys['left']:
-			self.move((-1*self.speed,0),DIM,actors)
-		if self.keys['right']:
-			self.move((1*self.speed,0),DIM,actors)
-		if self.keys['dijk']:
-			self.dijk()
+		if len(self.path) == 0:
+			if self.keys['up']:
+				self.move((0,1*self.speed),DIM,actors)
+			if self.keys['down']:
+				self.move((0,-1*self.speed),DIM,actors)
+			if self.keys['left']:
+				self.move((-1*self.speed,0),DIM,actors)
+			if self.keys['right']:
+				self.move((1*self.speed,0),DIM,actors)
+			if self.keys['dijk']:
+				self.dijk()
+		else:
+			self.path_update(dt,DIM,actors)
+	
+	def path_update(self,dt,DIM,actors):
+		if len(self.path) == 0:
+			return
+		print("path_update to")
+		goal = self.path[0]
+		print(goal)
+		current = self.get_center()
+		if goal == current:
+			self.path.pop(0)
+			return
+		difference = v_sub(goal,current)
+		sign = [0,0]
+		if difference[0] != 0:
+			sign[0] = difference[0]/abs(difference[0])
+		if difference[1] != 0:
+		 	sign[1] = difference[1]/abs(difference[1])
+		move = list(difference)
+		if difference[0] >= self.speed:
+			move[0] = sign[0]*self.speed
+		if difference[1] >= self.speed:
+			move[1] = sign[1]*self.speed
+		self.move(move,DIM,actors)
+
+
+
 
 	def dijk(self):
 		if (len(self.dest) == 0):
@@ -113,6 +147,7 @@ class SquareRobot(Actor):
 
 		path = self.map.dijkstras()
 		print(path)
+		self.path = path
 			
 
 		self.keys['dijk'] = False
@@ -176,6 +211,7 @@ class SquareRobot(Actor):
 					node.assign_neighbor("right",neighbor_node)
 				elif index == 3:
 					node.assign_neighbor("left",neighbor_node)
+				"""
 				elif index == 4:
 					node.assign_neighbor("q1",neighbor_node)
 				elif index == 5:	
@@ -184,6 +220,7 @@ class SquareRobot(Actor):
 					node.assign_neighbor("q3",neighbor_node)
 				elif index == 7:
 					node.assign_neighbor("q4",neighbor_node)
+				"""
 		print("post stitching:")
 		print(visited_nodes)
 		for pos,node in visited_nodes.items():
@@ -200,13 +237,13 @@ def possible_neighbors(center,dim):
 	center_down = v_sub(center,(0,dim[1])) 		#1
 	center_right = v_add(center,(dim[0],0))		#2
 	center_left = v_sub(center,(dim[0],0))		#3
-	center_q1 = v_add(center,dim)				#4
-	center_q2 = v_add(center,(-dim[0],dim[1]))	#5
-	center_q3 = v_sub(center,dim)				#6
-	center_q4 = v_add(center,(dim[0],-dim[1]))	#7
+	#center_q1 = v_add(center,dim)				#4
+	#center_q2 = v_add(center,(-dim[0],dim[1]))	#5
+	#center_q3 = v_sub(center,dim)				#6
+	#center_q4 = v_add(center,(dim[0],-dim[1]))	#7
 
-	v_list = [center_up,center_down,center_right,center_left,
-		center_q1,center_q2,center_q3,center_q4]
+	v_list = [center_up,center_down,center_right,center_left]
+		#center_q1,center_q2,center_q3,center_q4]
 	return v_list
 
 
@@ -217,7 +254,11 @@ def v_add(v1,v2):
 	return (v1[0]+v2[0],v1[1]+v2[1])
 
 def v_div(v1,s):
+	assert(s != 0)
 	return (v1[0]/s,v2[0]/s)
+
+def v_time(v1,s):
+	return (v1[0]*s,v2[0]*s)
 
 
 
