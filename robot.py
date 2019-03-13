@@ -8,6 +8,7 @@ from graph import *
 #specialized actor robot
 class SquareRobot(Actor):
 	def __init__(self):
+		#start with left bottom corner
 		DIM = (50,50)
 		center = (25,25)
 		self.sensor = None
@@ -25,12 +26,18 @@ class SquareRobot(Actor):
 		self.dest = []
 		self.map = None
 		self.path = []
+	
 	def get_center(self):
 		center_v = self.parts[0].get_center()
 		return (center_v.x,center_v.y)
 
+	def get_dim(self):
+		return (self.parts[0].get_width(),self.parts[0].get_height())
+
 	def set_sensor(self,sensor):
 		self.sensor = sensor
+		self.construct_belief_map()
+		print("done with setup")
 
 	def get_dim(self):
 		return (self.parts[0].get_width(),self.parts[0].get_height())
@@ -123,14 +130,12 @@ class SquareRobot(Actor):
 		if (len(self.dest) == 0):
 			print("exiting dijkstra function")
 			return
+			
 		if (self.sensor == None):
 			print("do not have sensor")
 			return
 
 		print("I need to do some dijkstra stuff")
-		if not self.map:
-			self.construct_belief_map()
-
 		
 		print("running to destination:")
 		destination = self.dest.pop(0)

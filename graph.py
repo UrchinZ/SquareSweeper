@@ -46,8 +46,8 @@ class Graph():
 				cost[n] = min(cost[n],cost[node]+length(node,n))
 				if n not in visited:
 					queue.append(n)
-		print(cost)
-		print(self.map[self.dest].prev)
+		#print(cost)
+		#print(self.map[self.dest].prev)
 		node = self.dest
 		path = []
 		while node != None:
