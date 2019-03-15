@@ -130,7 +130,7 @@ class SquareRobot(Actor):
 		if (len(self.dest) == 0):
 			print("exiting dijkstra function")
 			return
-			
+
 		if (self.sensor == None):
 			print("do not have sensor")
 			return
@@ -151,6 +151,7 @@ class SquareRobot(Actor):
 		self.map.set_start(start)
 
 		path = self.map.dijkstras()
+		print("path generated:")
 		print(path)
 		self.path = path
 			
@@ -171,14 +172,13 @@ class SquareRobot(Actor):
 			pos = queue.pop(0)
 			neighbor_list = generate_neighbors(pos,dim,self.sensor)
 			for neighbor in neighbor_list:
-				if neighbor not in queue and neighbor not in visited_nodes.keys():
+				if (neighbor not in queue) and (
+					neighbor not in visited_nodes.keys()):
 					queue.append(neighbor)
 			#mark position in visited node
 			visited_nodes[pos] = None
-		print("inside construction queue: ")
-		print(queue)
-		print(len(queue))
-		print("visited_nodes:")
+		#print("inside construction queue: ")
+		#print("visited_nodes:")
 		print(visited_nodes)
 		print(len(visited_nodes.keys()))
 		
@@ -197,6 +197,7 @@ class SquareRobot(Actor):
 				#skip if not in visited node
 				if neighbor not in visited_nodes.keys():
 					continue
+
 				neighbor_node = visited_nodes[neighbor]
 				"""
 				#####################################
@@ -274,7 +275,8 @@ def generate_neighbors(center,dim,sensor):
 	#generate all the neighbors
 	for i in range(len(v_list)):
 		c = v_list[i]
-		if(sensor.check_within_boundary(V(c[0],c[1]))):
+		#TODO add check with collision
+		if(sensor.check_within_boundary(V(c[0],c[1])) and not sensor.collide_with_obs(c)):
 			node_list.append(c)
 	return node_list
 
@@ -287,16 +289,30 @@ class Sensor():
 		self.owner = owner
 		self.obs = obstcles
 		self.space_dim = dim
+		self.virtual_pos = owner.get_center()
+
+	def collide_with_obs(self,pos):
+		print("check with obstacle")
+		self.virtual_pos = V(pos[0],pos[1])
+		for obstacle in self.obs:
+			parts = obstacle.get_parts()
+			for p in parts:
+				if self.check_with_obs(p):
+					print("would collide with obstacle part")
+					print(p)
+					print(self.virtual_pos)
+					return True
+		return False
+
 	#return if shape collide with obstacles
 	def check_with_obs(self,shape):
-	    for actor in obstacle:
-	        for p in actor.get_parts():
-	            overlap,direction=check_xy_overlap(shape,p)
-	            if(overlap):
-	                return overlap
-	    return False
-	def check_point_with_obs(self,v):
-		point = Shape("point",v)
-
+		DIM = self.owner.get_dim()
+		v1 = V(self.virtual_pos.x-DIM[0]/2, self.virtual_pos.y-DIM[1]/2)
+		p = Rectangle(v1,width = DIM[0],height=DIM[1])
+		print("virtual position")
+		print(p)
+		overlap,direction=check_xy_overlap(shape,p)
+		return overlap
+	
 	def check_within_boundary(self,v):
 		return v.x>0 and v.x <self.space_dim[0] and v.y>0 and v.y < self.space_dim[1]
