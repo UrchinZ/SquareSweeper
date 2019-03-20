@@ -22,7 +22,8 @@ class SquareRobot(Actor):
 		#self.key_handler = key.KeyStateHandler()
 		#self.event_handlers = [self, self.key_handler]
 		self.speed = 2
-		self.keys = dict(left=False, right=False, up=False, down=False, dijk = False)
+		self.keys = dict(left=False, right=False, up=False, down=False, 
+					dijk = False, a_star = False)
 		self.dest = []
 		self.map = None
 		self.path = []
@@ -30,6 +31,9 @@ class SquareRobot(Actor):
 	def get_center(self):
 		center_v = self.parts[0].get_center()
 		return (center_v.x,center_v.y)
+
+	def get_center_v(self):
+		return self.parts[0].get_center()
 
 	def get_dim(self):
 		return (self.parts[0].get_width(),self.parts[0].get_height())
@@ -58,8 +62,11 @@ class SquareRobot(Actor):
 			print("left")
 			self.keys["left"] = True
 		elif symbol == key.D:
-			print("Running dijk's...")
+			print("Running Dijk's...")
 			self.keys["dijk"] = True
+		elif symbol == key.A:
+			print("Running A*...")
+			self.keys["a_star"] = True
 
 
 	def on_key_release(self, symbol, modifiers):
@@ -97,6 +104,8 @@ class SquareRobot(Actor):
 				self.move((1*self.speed,0),DIM,actors)
 			if self.keys['dijk']:
 				self.dijk()
+			if self.keys['a_star']:
+				self.a_star()
 		else:
 			self.path_update(dt,DIM,actors)
 	
@@ -157,8 +166,41 @@ class SquareRobot(Actor):
 			
 
 		self.keys['dijk'] = False
+		print("done with dijkstra")
 
 
+	def a_star(self):
+		if (len(self.dest) == 0):
+			print("No exiting a_star function")
+			return
+
+		if (self.sensor == None):
+			print("do not have sensor")
+			return
+
+		#locate destination
+		destination = self.dest.pop(0)
+		print("a_star: running to desination" + str(destination))
+		dest = self.map.locate_node(destination)
+		print("a_star: inside node: " + str(dest))
+
+		#locate start
+		start_position = self.get_center_v()
+		start = self.map.locate_node(start_position)
+		print("a_star: from: "+str(start_position) + 
+			" inside node entered: "+ str(start))
+
+		#run a_star magic
+		self.map.set_dest(dest)
+		self.map.set_start(start)
+		path = self.map.a_star()
+		print("a_star: path: " + str(path))
+
+		#set robot path to planned path
+		self.path = path
+		
+		self.keys["a_star"] = False
+		print("done with a_star")
 
 
 

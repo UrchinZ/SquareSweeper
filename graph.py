@@ -55,7 +55,84 @@ class Graph():
 			node = self.map[node].prev
 		return path[::-1]
 
+	def distance_to_dest(self,pos):
+		return length(self.dest,pos)
 
+	def a_star(self):
+		print("inside a_star")
+		self.reset_nodes()
+
+		#G value is the cost form start to current node
+		costG = dict((el,float("inf")) for el in self.map.keys())
+		#H estimated cost from current to goal
+		costH = dict((el,float("inf")) for el in self.map.keys())
+		#F = G + H
+		costF = dict((el,float("inf")) for el in self.map.keys())
+
+		costG[self.start] = 0
+		costH[self.start] = self.distance_to_dest(self.start)
+		costF[self.start] = costG[self.start] + costH[self.start]
+
+		min_node = self.start
+		visited = []
+
+		print("costG:")
+		print(costG)
+		print('costH:')
+		print(costH)
+
+		while(min_node):
+			node = min_node
+			min_node = None
+			visited.append(node)
+
+			#update G cost and H cost around neighbors
+			nodes = self.map[node].neighbors_pos()
+			print("a_star neighbors: "+ str(nodes))
+			for n in nodes:
+				dd = self.distance_to_dest(n)
+				#destination is reached
+				if(dd == 0):
+					print("break inside a_star")
+					self.map[n].prev = node
+					break;
+
+				costH[n] = dd	
+				dist_to_node = costG[node] + length(node,n) 
+				if(costG[n] > dist_to_node):
+					costG[n] = dist_to_node
+					self.map[n].prev = node
+
+				#update F
+				costF[n] = costG[n] + costH[n]
+
+			#determine the next min
+			candidates = sort_eliminate_key(costF,visited)
+			print("a_star: candidate: " + str(candidates))
+			if(len(candidates) > 0):
+				min_node = candidates[0]
+
+			print("a_star: explored "+str(node))
+			print("a_star: Fcost: ")
+			print(costF)
+			print("a_star: next: " + str(min_node))
+
+		node = self.dest
+		path = []
+		while node != None:
+			path.append(node)
+			node = self.map[node].prev
+		return path[::-1]	
+
+		return path
+
+
+def sort_eliminate_key(d,visited):
+	l = {}
+	for i in d.items():
+		if i[1] < float("inf") and i[0] not in visited:
+			l[i[0]] = i[1]
+	return sorted(l,key=lambda k:l[k])
 
 
 
