@@ -4,6 +4,8 @@ from pyglet.window import key
 from actor import Actor
 from shape import *
 from graph import *
+from sensor import *
+
 
 #specialized actor robot
 class SquareRobot(Actor):
@@ -23,7 +25,7 @@ class SquareRobot(Actor):
 		#self.event_handlers = [self, self.key_handler]
 		self.speed = 2
 		self.keys = dict(left=False, right=False, up=False, down=False, 
-					dijk = False, a_star = False)
+					dijk = False, a_star = False,rrt = False)
 		self.dest = []
 		self.map = None
 		self.path = []
@@ -67,6 +69,9 @@ class SquareRobot(Actor):
 		elif symbol == key.A:
 			print("Running A*...")
 			self.keys["a_star"] = True
+		elif symbol == key.R:
+			print("Running rrt...")
+			self.keys["rrt"] = True
 
 
 	def on_key_release(self, symbol, modifiers):
@@ -106,6 +111,8 @@ class SquareRobot(Actor):
 				self.dijk()
 			if self.keys['a_star']:
 				self.a_star()
+			if self.keys['rrt']:
+				self.rrt()
 		else:
 			self.path_update(dt,DIM,actors)
 	
@@ -203,6 +210,11 @@ class SquareRobot(Actor):
 		print("done with a_star")
 
 
+	def rrt(self):
+		start = self.get_center()
+		end = v_add(start,(50,50))
+		self.sensor.check_path(start, end)
+		self.keys["rrt"] = False
 
 	#run bfs to construct a reasonable map
 	def construct_belief_map(self):
@@ -241,7 +253,7 @@ class SquareRobot(Actor):
 					continue
 
 				neighbor_node = visited_nodes[neighbor]
-				"""
+				
 				#####################################
 				# 	  q2 5	# 	up 	0	# q1 	4	# 
 				#-----------#-----------#-----------#
@@ -249,7 +261,7 @@ class SquareRobot(Actor):
 				#-----------#-----------#-----------#
 				#	  q3 6	#	down 1	# q4 	7	#
 				#####################################
-				"""
+				
 				#assign relative position based on index
 				if index == 0:
 					node.assign_neighbor("up",neighbor_node)
@@ -259,16 +271,16 @@ class SquareRobot(Actor):
 					node.assign_neighbor("right",neighbor_node)
 				elif index == 3:
 					node.assign_neighbor("left",neighbor_node)
-				"""
-				elif index == 4:
-					node.assign_neighbor("q1",neighbor_node)
-				elif index == 5:	
-					node.assign_neighbor("q2",neighbor_node)
-				elif index == 6:
-					node.assign_neighbor("q3",neighbor_node)
-				elif index == 7:
-					node.assign_neighbor("q4",neighbor_node)
-				"""
+			
+				#elif index == 4:
+				#	node.assign_neighbor("q1",neighbor_node)
+				#elif index == 5:	
+				#	node.assign_neighbor("q2",neighbor_node)
+				#elif index == 6:
+				#	node.assign_neighbor("q3",neighbor_node)
+				#elif index == 7:
+				#	node.assign_neighbor("q4",neighbor_node)
+				
 		print("post stitching:")
 		print(visited_nodes)
 		for pos,node in visited_nodes.items():
@@ -324,37 +336,3 @@ def generate_neighbors(center,dim,sensor):
 
 
 
-
-#sensing checking surroundings for robot
-class Sensor():
-	def __init__(self,owner,obstcles,dim):
-		self.owner = owner
-		self.obs = obstcles
-		self.space_dim = dim
-		self.virtual_pos = owner.get_center()
-
-	def collide_with_obs(self,pos):
-		print("check with obstacle")
-		self.virtual_pos = V(pos[0],pos[1])
-		for obstacle in self.obs:
-			parts = obstacle.get_parts()
-			for p in parts:
-				if self.check_with_obs(p):
-					print("would collide with obstacle part")
-					print(p)
-					print(self.virtual_pos)
-					return True
-		return False
-
-	#return if shape collide with obstacles
-	def check_with_obs(self,shape):
-		DIM = self.owner.get_dim()
-		v1 = V(self.virtual_pos.x-DIM[0]/2, self.virtual_pos.y-DIM[1]/2)
-		p = Rectangle(v1,width = DIM[0],height=DIM[1])
-		print("virtual position")
-		print(p)
-		overlap,direction=check_xy_overlap(shape,p)
-		return overlap
-	
-	def check_within_boundary(self,v):
-		return v.x>0 and v.x <self.space_dim[0] and v.y>0 and v.y < self.space_dim[1]
