@@ -31,10 +31,10 @@ DIM = (width,height)
 #obstacle = [obs1,obs2,obs3,obs4,obs5];
 
 
-obs1 = Obs(shapes=[Rectangle(V(102,102),width=20,height=20)])
-obstacle = [obs1]
-actors.append(obs1)
-
+#obs1 = Obs(shapes=[Rectangle(V(102,102),width=20,height=20)])
+#obstacle = [obs1]
+#actors.append(obs1)
+obstacle = []
 #equipt robot with magical sensor that sense things
 s = Sensor(robot,obstacle,DIM)
 robot.set_sensor(s)

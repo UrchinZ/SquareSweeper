@@ -29,6 +29,7 @@ class SquareRobot(Actor):
 		self.dest = []
 		self.map = None
 		self.path = []
+		self.sample_based = False
 	
 	def get_center(self):
 		center_v = self.parts[0].get_center()
@@ -114,8 +115,25 @@ class SquareRobot(Actor):
 			if self.keys['rrt']:
 				self.rrt()
 		else:
-			self.path_update(dt,DIM,actors)
+			if self.sample_based:
+				self.sample_update(dt,DIM,actors)
+			else:
+				self.path_update(dt,DIM,actors)
 	
+	def sample_update(self,dt,DIM,actors):
+		if len(self.path) == 0:
+			return
+		print("path_update to")
+		goal = self.path[0]
+		print(goal)
+		current = self.get_center()
+		if goal == current:
+			self.path.pop(0)
+			return
+		difference = v_sub(goal,current)
+		move = list(difference)
+		self.move(move,DIM,actors)
+
 	def path_update(self,dt,DIM,actors):
 		if len(self.path) == 0:
 			return
@@ -211,9 +229,17 @@ class SquareRobot(Actor):
 
 
 	def rrt(self):
+		#throw 10 points into the scene
+		rand = self.sensor.get_rand_in_cspace(1)
+		for p in rand:
+			print("random point: " + str(p))
+			self.path.append(p)
+
+
 		start = self.get_center()
 		end = v_add(start,(50,50))
 		self.sensor.check_path(start, end)
+		self.sample_based = True
 		self.keys["rrt"] = False
 
 	#run bfs to construct a reasonable map

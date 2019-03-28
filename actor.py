@@ -74,7 +74,7 @@ class Obs(Actor):
         Actor.__init__(self,shapes,"obs")
     
     def update(self,dt,DIM,actors):
-      pass
+      return
 
 
 

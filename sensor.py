@@ -3,6 +3,8 @@ from shape import *
 from graph import *
 from shapely.geometry import Point as ShapelyPoint
 from shapely.geometry.polygon import Polygon as ShapelyPolygon
+import random
+
 
 #sensing checking surroundings for robot
 class Sensor():
@@ -34,9 +36,28 @@ class Sensor():
 		print(p)
 		overlap,direction=check_xy_overlap(shape,p)
 		return overlap
-	
+
 	def check_within_boundary(self,v):
 		return v.x>0 and v.x <self.space_dim[0] and v.y>0 and v.y < self.space_dim[1]
+
+	def get_rand_in_cspace(self, n):
+		space = self.space_dim
+		robot_dim = self.owner.get_dim()
+		#cspace = (robot_dim[0], space[0]-robot_dim[0], robot_dim[1], space[1]-robot_dim[1])
+		cspacex = (robot_dim[0], space[0]-robot_dim[0])
+		cspacey = (robot_dim[1], space[1]-robot_dim[1])
+		x_dist = cspacex[1] - cspacex[0]
+		y_dist = cspacey[1] - cspacey[0]
+
+		rand_points = []
+		for pt in range(n):
+			x = random.randrange(*(cspacex))
+			y = random.randrange(*(cspacey))
+			rand_points.append((x,y))
+		return rand_points
+
+
+		
 
 	#check if any obstacle hit the path of robot
 	def check_path(self, start, end):
