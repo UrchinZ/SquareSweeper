@@ -6,6 +6,7 @@ from shape import *
 from graph import *
 from sensor import *
 
+K = 10
 
 #specialized actor robot
 class SquareRobot(Actor):
@@ -43,7 +44,7 @@ class SquareRobot(Actor):
 
 	def set_sensor(self,sensor):
 		self.sensor = sensor
-		self.construct_belief_map()
+		self.construct_belief_map() #dijkstra's and a* map setup
 		print("done with setup")
 
 	def get_dim(self):
@@ -137,9 +138,8 @@ class SquareRobot(Actor):
 	def path_update(self,dt,DIM,actors):
 		if len(self.path) == 0:
 			return
-		print("path_update to")
 		goal = self.path[0]
-		print(goal)
+		print("path_update to "+str(goal))
 		current = self.get_center()
 		if goal == current:
 			self.path.pop(0)
@@ -158,9 +158,8 @@ class SquareRobot(Actor):
 		self.move(move,DIM,actors)
 
 
-
-
 	def dijk(self):
+		self.sample_based = False
 		if (len(self.dest) == 0):
 			print("exiting dijkstra function")
 			return
@@ -189,12 +188,12 @@ class SquareRobot(Actor):
 		print(path)
 		self.path = path
 			
-
 		self.keys['dijk'] = False
 		print("done with dijkstra")
 
 
 	def a_star(self):
+		self.sample_based = False
 		if (len(self.dest) == 0):
 			print("No exiting a_star function")
 			return
@@ -227,18 +226,31 @@ class SquareRobot(Actor):
 		self.keys["a_star"] = False
 		print("done with a_star")
 
+	"""
+	build_rrt(qinit){
+	
+		T.init(qinit);
+		for k = 1 to K do
+			q_rand = Random_config();
+			extend(T,q_rand);
+	}
+
+	"""	
 
 	def rrt(self):
-		#throw 10 points into the scene
-		rand = self.sensor.get_rand_in_cspace(1)
-		for p in rand:
-			print("random point: " + str(p))
-			self.path.append(p)
-
-
+		tree = Graph()
+		#T.init(q_init)
 		start = self.get_center()
-		end = v_add(start,(50,50))
-		self.sensor.check_path(start, end)
+		tree.rrt_init(start)
+
+		for k in range(K):
+			rand = self.sensor.get_rand_free()
+			print("random point: " + str(rand))
+			self.path.append(rand)
+
+		#end = self.path[0]
+		#self.sensor.extend(start,end)
+		#self.sensor.check_path(start, end)
 		self.sample_based = True
 		self.keys["rrt"] = False
 

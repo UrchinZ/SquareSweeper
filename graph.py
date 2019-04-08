@@ -126,6 +126,12 @@ class Graph():
 
 		return path
 
+	def rrt_init(self,init):
+		self.map = dict()
+		self.map[init] = Node(init[0], init[1])
+		print("tree initialized: " + str(self.map.keys()))
+
+
 
 def sort_eliminate_key(d,visited):
 	l = {}

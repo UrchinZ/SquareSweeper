@@ -14,8 +14,9 @@ obstacle = []
 #setting window dimension
 width = robot_dim[0]*4  # 400
 height = robot_dim[1]*4  #4  300
+#width = 400
+#height = 350
 DIM = (width,height)
-
 
 #bedroom setup
 #obs1 = Obs(shapes=[Rectangle(V(365,130),width=20,height=20)])
@@ -34,7 +35,6 @@ DIM = (width,height)
 #obs1 = Obs(shapes=[Rectangle(V(102,102),width=20,height=20)])
 #obstacle = [obs1]
 #actors.append(obs1)
-obstacle = []
 #equipt robot with magical sensor that sense things
 s = Sensor(robot,obstacle,DIM)
 robot.set_sensor(s)

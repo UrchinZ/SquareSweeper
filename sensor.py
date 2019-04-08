@@ -4,6 +4,7 @@ from graph import *
 from shapely.geometry import Point as ShapelyPoint
 from shapely.geometry.polygon import Polygon as ShapelyPolygon
 import random
+import math
 
 
 #sensing checking surroundings for robot
@@ -40,6 +41,13 @@ class Sensor():
 	def check_within_boundary(self,v):
 		return v.x>0 and v.x <self.space_dim[0] and v.y>0 and v.y < self.space_dim[1]
 
+	#return a point that is not in obstacle
+	def get_rand_free(self):
+		point = self.get_rand_in_cspace(1)
+		while self.collide_with_obs(point[0]):
+			point = self.get_rand_in_cspace(1)
+		return point[0]
+
 	def get_rand_in_cspace(self, n):
 		space = self.space_dim
 		robot_dim = self.owner.get_dim()
@@ -57,7 +65,28 @@ class Sensor():
 		return rand_points
 
 
+	def extend(self,start,end):
+		#speed = self.owner.speed
+		speed = int(self.owner.get_dim()[0]/2)
+		print("robot speed: " + str(speed))
 		
+		total_length = length(start,end)
+		print("robot total length: " + str(total_length))
+
+		path_list = []
+		steps = int(math.floor(total_length/speed))
+		for s in range(steps):
+			size = s * speed/total_length
+			print("size: " + str(size))
+			point = (int(math.floor(size*end[0] + (1-size)*start[0])), 
+				int(math.floor(size*end[1] + (1-size)*start[1])))
+			print("new point: " + str(point))
+			path_list.append(point)
+		path_list.append(end)
+		print(path_list)
+		return path_list
+
+
 
 	#check if any obstacle hit the path of robot
 	def check_path(self, start, end):
