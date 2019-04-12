@@ -124,12 +124,58 @@ class Graph():
 			node = self.map[node].prev
 		return path[::-1]	
 
-		return path
 
-	def rrt_init(self,init):
-		self.map = dict()
-		self.map[init] = Node(init[0], init[1])
-		print("tree initialized: " + str(self.map.keys()))
+	# a wonderfully clear path
+	def tree_extend(self,branch):
+		if self.map == None:
+			init = branch[0]
+			self.map = dict()
+			self.map[init] = Node(init[0], init[1])
+			print("tree initialized: " + str(self.map.keys()))
+
+		#start branch with a known position
+		p = branch.pop(0)
+		assert(p in self.map.keys())
+		
+		#extend branch
+		while len(branch) > 0:
+			node = branch.pop(0)
+			if node not in self.map.keys():
+				self.map[node] = Node(node[0],node[1])
+			self.map[node].prev = p
+			p = node
+
+	#print tree structure
+	def print_tree(self):
+		for node in self.map.keys():
+			prev = self.map[node].prev
+			if prev:
+				print(str(node) + "--" + str(prev))
+			else:
+				print(str(node) + "-- None")
+
+	#closest distance based on euclean distance
+	def closest_point(self,pos):
+		closest_point = self.map.keys()[0]
+		distance = (closest_point[0]-pos[0])**2 + (closest_point[1]-pos[1])**2
+		for k in self.map.keys():
+			dist = (k[0] - pos[0])**2 + (k[1] - pos[1])**2
+			if (dist < distance):
+				closest_point = k
+				distance = dist
+		return closest_point
+
+	def traceback(self):
+		assert(self.start != None)
+		assert(self.dest != None)
+
+		node = self.dest
+		path = []
+		while node != None:
+			path.append(node)
+			node = self.map[node].prev
+		return path[::-1]	
+
 
 
 
@@ -169,6 +215,7 @@ class Node():
 	def get_pos(self):
 		return (self.x,self.y)
 
+	#node should be a position tupple
 	def set_prev(self,node):
 		self.prev = node
 

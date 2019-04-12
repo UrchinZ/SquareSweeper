@@ -238,19 +238,67 @@ class SquareRobot(Actor):
 	"""	
 
 	def rrt(self):
+		if (len(self.dest) == 0):
+			print("Exiting rrt")
+			self.keys["rrt"] = False
+			return
+
+		#locate destination
+		destination = self.dest.pop(0)
+		dest = (destination.x,destination.y)
+		print("rrt: running to desination" + str(destination))
+		free = self.sensor.check_in_cfree(dest)
+		print("free: "+str(free))
+
+		if not free:
+			print("choose center of the robot in a better place")
+			self.keys["rrt"] = False
+			return
+
 		tree = Graph()
 		#T.init(q_init)
 		start = self.get_center()
-		tree.rrt_init(start)
+		tree.tree_extend([start])
 
-		for k in range(K):
+		# p0 = start
+		# p1 = (25,35)
+		# p2 = (25,45)
+		# p3 = (35,35)
+
+		# tree.tree_extend([p0,p1,p2])
+		# tree.print_tree()
+		# print("closest_point to p3 "+str(p3))
+		# print(tree.closest_point(p3))
+
+		# tree.tree_extend([p1,p3])
+		# tree.print_tree()
+
+		points = []
+		for k in range(10):
+			print("=======\n" + str(k) + " sample")
+			#generate random point
 			rand = self.sensor.get_rand_free()
 			print("random point: " + str(rand))
-			self.path.append(rand)
+			points.append(rand)
 
-		#end = self.path[0]
-		#self.sensor.extend(start,end)
-		#self.sensor.check_path(start, end)
+		points.append(dest)
+		for rand in points:
+			#extend
+			#get nearest point
+			nearest = tree.closest_point(rand)
+			#check if path is safe to extend
+			path_free = self.sensor.check_path(nearest,rand)
+			# if path_free TODO
+			path = self.sensor.extend(nearest,rand)
+			print(str(k)+" path: "+str(path))	
+			tree.tree_extend(path)
+			print("growing tree: "+str(k))
+			tree.print_tree()
+
+		#run magic
+		tree.set_dest(dest)
+		tree.set_start(start)
+		self.path = tree.traceback()
 		self.sample_based = True
 		self.keys["rrt"] = False
 

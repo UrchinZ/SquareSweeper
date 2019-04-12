@@ -52,10 +52,12 @@ class Sensor():
 		space = self.space_dim
 		robot_dim = self.owner.get_dim()
 		#cspace = (robot_dim[0], space[0]-robot_dim[0], robot_dim[1], space[1]-robot_dim[1])
-		cspacex = (robot_dim[0], space[0]-robot_dim[0])
-		cspacey = (robot_dim[1], space[1]-robot_dim[1])
+		cspacex = (robot_dim[0]/2, space[0]-robot_dim[0]/2)
+		cspacey = (robot_dim[1]/2, space[1]-robot_dim[1]/2)
 		x_dist = cspacex[1] - cspacex[0]
 		y_dist = cspacey[1] - cspacey[0]
+
+		print(str(cspacex) + " cspacex | "+str(cspacey)+ " cspacey")
 
 		rand_points = []
 		for pt in range(n):
@@ -75,6 +77,10 @@ class Sensor():
 
 		path_list = []
 		steps = int(math.floor(total_length/speed))
+		
+		if steps == 0:
+			path_list.append(start)
+
 		for s in range(steps):
 			size = s * speed/total_length
 			print("size: " + str(size))
@@ -83,8 +89,19 @@ class Sensor():
 			print("new point: " + str(point))
 			path_list.append(point)
 		path_list.append(end)
-		print(path_list)
 		return path_list
+
+
+	def check_in_cfree(self,pos):
+		space = self.space_dim
+		robot_dim = self.owner.get_dim()
+		cspacex = (robot_dim[0]/2, space[0]-robot_dim[0]/2)
+		cspacey = (robot_dim[1]/2, space[1]-robot_dim[1]/2)
+		if(pos[0]<cspacex[0] or pos[0] >cspacex[1] or pos[1]<cspacey[0] or pos[1]>cspacey[1]):
+			return False
+		if self.collide_with_obs(pos):
+			return False
+		return True
 
 
 
@@ -133,9 +150,3 @@ class Sensor():
 
 
 		
-
-
-
-
-		#v1 = V(start[0] - DIM[0]/2, start[1]-DIM[1]/2)
-		#start_box = Rectangle(v1,width = DIM[0],height=DIM[1])
