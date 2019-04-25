@@ -6,7 +6,7 @@ from shape import *
 from graph import *
 from sensor import *
 
-K = 10
+K = 100
 
 #specialized actor robot
 class SquareRobot(Actor):
@@ -116,11 +116,13 @@ class SquareRobot(Actor):
 			if self.keys['rrt']:
 				self.rrt()
 		else:
-			if self.sample_based:
-				self.sample_update(dt,DIM,actors)
-			else:
-				self.path_update(dt,DIM,actors)
+			#if self.sample_based:
+			#	self.sample_update(dt,DIM,actors)
+			#else:
+			#	self.path_update(dt,DIM,actors)
+			self.path_update(dt,DIM,actors)
 	
+	"""
 	def sample_update(self,dt,DIM,actors):
 		if len(self.path) == 0:
 			return
@@ -134,6 +136,7 @@ class SquareRobot(Actor):
 		difference = v_sub(goal,current)
 		move = list(difference)
 		self.move(move,DIM,actors)
+	"""
 
 	def path_update(self,dt,DIM,actors):
 		if len(self.path) == 0:
@@ -260,26 +263,15 @@ class SquareRobot(Actor):
 		start = self.get_center()
 		tree.tree_extend([start])
 
-		# p0 = start
-		# p1 = (25,35)
-		# p2 = (25,45)
-		# p3 = (35,35)
-
-		# tree.tree_extend([p0,p1,p2])
-		# tree.print_tree()
-		# print("closest_point to p3 "+str(p3))
-		# print(tree.closest_point(p3))
-
-		# tree.tree_extend([p1,p3])
-		# tree.print_tree()
-
 		points = []
-		for k in range(10):
+		for k in range(K):
 			print("=======\n" + str(k) + " sample")
 			#generate random point
 			rand = self.sensor.get_rand_free()
 			print("random point: " + str(rand))
 			points.append(rand)
+		
+		print("===== done wiith rand points")
 
 		points.append(dest)
 		for rand in points:
@@ -288,6 +280,9 @@ class SquareRobot(Actor):
 			nearest = tree.closest_point(rand)
 			#check if path is safe to extend
 			path_free = self.sensor.check_path(nearest,rand)
+			print("return from sensor check: "+str(path_free))
+			if(path_free):
+				rand = path_free
 			# if path_free TODO
 			path = self.sensor.extend(nearest,rand)
 			print(str(k)+" path: "+str(path))	
@@ -301,6 +296,8 @@ class SquareRobot(Actor):
 		self.path = tree.traceback()
 		self.sample_based = True
 		self.keys["rrt"] = False
+		tree.graph_print()
+		print("Done with rrt")
 
 	#run bfs to construct a reasonable map
 	def construct_belief_map(self):

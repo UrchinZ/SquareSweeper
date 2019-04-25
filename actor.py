@@ -31,7 +31,7 @@ class Actor():
                 v = part.get_pos()
                 num = len(v)/2
                 pyglet.graphics.draw(num, pyglet.gl.GL_POLYGON,
-                ('v2i',v))
+                ('v2f',v))
 
     #TODO translate is more like move fix in shape
     def move(self,vec,DIM,actors):

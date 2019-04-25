@@ -3,9 +3,9 @@ from shape import *
 from graph import *
 from shapely.geometry import Point as ShapelyPoint
 from shapely.geometry.polygon import Polygon as ShapelyPolygon
+from shapely.geometry import LineString
 import random
 import math
-
 
 #sensing checking surroundings for robot
 class Sensor():
@@ -105,8 +105,9 @@ class Sensor():
 
 
 
-	#check if any obstacle hit the path of robot
+	#check collision and return the closest point robot can reach
 	def check_path(self, start, end):
+		"""
 		print("inside check path: " + str(start) + " to " + str(end))
 		dim = self.owner.get_dim()
 		#half the dimension
@@ -139,14 +140,87 @@ class Sensor():
 		left_y_min = (left[0] - hdx, left[1] - hdy)
 
 		path = ShapelyPolygon([lower_x_min, lower_x_max,right_y_min,right_y_max,top_x_max,top_x_min,left_y_max,left_y_min])
-		print("path: ")
+		print("robot path exterior: ")
 		print(list(path.exterior.coords))
-		test = [(25,25), (50,70), (32, 49), (120, 120), (60,5), (0, 78)]
+		#test = [(25,25), (50,70), (32, 49), (120, 120), (60,5), (0, 78)]
 
-		for t in test:
-			print("test point " + str(t))
-			point = ShapelyPoint(t)
-			print(path.contains(point))
+		#for t in test:
+		#	print("test point " + str(t))
+		#	point = ShapelyPoint(t)
+		#	print(path.contains(point))
+		print("checking points")
+		o = []
+		for obstacle in self.obs:
+			parts = obstacle.get_parts();
+			for part in parts:
+				verticles = part.get_pos()
+				points = []
+				for i in range(0,len(verticles),2):
+					points.append((verticles[i],verticles[i+1]))
+				print(points)
+				for p in points:
+					point = ShapelyPoint(p)
+					if path.contains(point):
+						print("contains")
+						o.append(part)
+		print("there are: "+str(len(o)) + " obstacles within path")
+		print(o)
+
+		for obs in o:
+			assert(len(obs.get_pos()) == 8)
+			center = obs.get_center()
+			DIM = self.owner.get_dim()
+			width = obs.get_width() + DIM[0]
+			height = obs.get_height() + DIM[1]
+			x_min = center.x-width/2
+			x_max = center.x+width/2
+			y_min = center.y-height/2
+		"""
+		print("inside check path: " + str(start) + " to " + str(end))
+		dim = self.owner.get_dim()
+		robot_path = LineString([start,end])
+
+
+		obs_shapes = []
+		for obs in self.obs:
+			parts = obs.get_parts();
+			obs_shapes.extend(parts)
+		print(len(obs_shapes))
+		print(obs_shapes)
+		oshape = []
+		intersection = []
+		print("obstacle space:")
+		for obs in obs_shapes:
+			center = obs.get_center()
+			width = obs.get_width() + dim[0]
+			height = obs.get_height() + dim[1]
+			x_min = center.x-width/2
+			x_max = center.x+width/2
+			y_min = center.y-height/2
+			y_max = center.y+height/2
+			path = ShapelyPolygon([(x_min,y_min), (x_max,y_min),(x_max,y_max),(x_min,y_max)])
+			oshape.append(path)
+			print(list(path.exterior.coords)) #debug statement
+			i = path.intersection(robot_path)
+			if(not i.is_empty):
+				intersection.append(i)
+
+		print("all intersections: ")
+		print(intersection)
+		# all points
+		interest = []
+		for p in intersection:
+			interest.extend(list(p.coords))
+		print interest
+		print("sorted")
+		sorted(interest, key=lambda x: (x[0]-start[0])**2 + (x[1]-start[1])**2)
+		print interest	
+		if(len(interest) > 0):
+			closest_point = interest[0]
+			return (int(math.floor(closest_point[0])),int(math.floor(closest_point[1])))
+		else:
+			return None	
+
 
 
 		

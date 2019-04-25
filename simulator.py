@@ -12,24 +12,24 @@ obstacle = []
 
 #making life easier
 #setting window dimension
-width = robot_dim[0]*4  # 400
-height = robot_dim[1]*4  #4  300
-#width = 400
-#height = 350
+#width = robot_dim[0]*4  # 400
+#height = robot_dim[1]*4  #4  300
+width = 400
+height = 350
 DIM = (width,height)
 
 #bedroom setup
-#obs1 = Obs(shapes=[Rectangle(V(365,130),width=20,height=20)])
-#obs2 = Obs(shapes=[Rectangle(V(175,130),width=20,height=20)])
-#obs3 = Obs(shapes=[Rectangle(V(365,15),width=20,height=20)])
-#obs4 = Obs(shapes=[Rectangle(V(175,15),width=20,height=20)])
-#obs5 = Obs(shapes=[Rectangle(V(0,275),width=120,height=75)])
-#actors.append(obs1)
-#actors.append(obs2)
-#actors.append(obs3)
-#actors.append(obs4)
-#actors.append(obs5)
-#obstacle = [obs1,obs2,obs3,obs4,obs5];
+obs1 = Obs(shapes=[Rectangle(V(365,130),width=20,height=20)])
+obs2 = Obs(shapes=[Rectangle(V(175,130),width=20,height=20)])
+obs3 = Obs(shapes=[Rectangle(V(365,15),width=20,height=20)])
+obs4 = Obs(shapes=[Rectangle(V(175,15),width=20,height=20)])
+obs5 = Obs(shapes=[Rectangle(V(0,275),width=120,height=75)])
+actors.append(obs1)
+actors.append(obs2)
+actors.append(obs3)
+actors.append(obs4)
+actors.append(obs5)
+obstacle = [obs1,obs2,obs3,obs4,obs5];
 
 
 #obs1 = Obs(shapes=[Rectangle(V(102,102),width=20,height=20)])

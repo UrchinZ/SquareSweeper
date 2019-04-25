@@ -1,10 +1,12 @@
 from shape import *
+import matplotlib.pyplot as plt
 
 class Graph():
 	def __init__(self):
 		self.map = None
 		self.dest = None
 		self.start = None
+		self.path = None
 
 	def set_graph(self, tmp_map):
 		self.map = tmp_map
@@ -170,11 +172,39 @@ class Graph():
 		assert(self.dest != None)
 
 		node = self.dest
+		if(node not in self.map.keys()):
+				print("failed to traceback")
+				return []
+
 		path = []
 		while node != None:
 			path.append(node)
 			node = self.map[node].prev
-		return path[::-1]	
+			
+		self.path = path[::-1]
+		return self.path	
+
+	def graph_print(self):
+		points = self.map.keys()
+		x = []
+		y = []
+		edgex = []
+		edgey =  []
+
+		for (i,j) in self.map.keys():
+			plt.plot([i],[j],'ro')
+			if(self.map[(i,j)].prev):
+				(prev_i,prev_j) = self.map[(i,j)].prev
+				plt.plot([prev_i,i],[prev_j,j],'k')
+		
+		if(self.path):
+			prev = self.path[0]
+			for(i,j) in self.path:
+				plt.plot([i,prev[0]],[j,prev[1]],color="y",linewidth=2)
+				prev = (i,j)
+		plt.title('Path Graph')
+		plt.show()
+
 
 
 
